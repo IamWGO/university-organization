@@ -102,7 +102,6 @@ CREATE TABLE IF NOT EXISTS recommended_branch (
 );
 
 -- Section 2
-
 CREATE TABLE IF NOT EXISTS registered (
   course_code VARCHAR(10) NOT NULL,
   student_code VARCHAR(10) NOT NULL,

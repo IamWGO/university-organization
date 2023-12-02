@@ -1,3 +1,4 @@
+
 -- ## drop views and functions before deleting tables
 -- 1. **basic_information(idnr, name, program, branch):**
 DROP VIEW IF EXISTS student_branch_view;
@@ -6,7 +7,7 @@ DROP VIEW IF EXISTS student_branch_view;
 DROP VIEW IF EXISTS student_finished_course_view;
 
 -- 3. **passed_courses(student, course, credits):**
-DROP VIEW IF EXISTS student_finished_course_view;
+DROP VIEW IF EXISTS student_passed_course_view;
 
 -- 4. **registrations(student, course, status):**
 DROP VIEW IF EXISTS student_register_status;
@@ -57,4 +58,11 @@ DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS departments_relate_programs;
 DROP TABLE IF EXISTS departments;
 DROP TABLE IF EXISTS programs;
+
+-- ## drop trigger after delete table
+DROP TRIGGER IF EXISTS tr_insert_register_or_wait ON registered;
+DROP FUNCTION IF EXISTS fn_insert_register_or_wait;
+
+DROP TRIGGER IF EXISTS tr_register_from_waiting_list ON taken ;
+DROP FUNCTION IF EXISTS fn_register_from_waiting_list;
 

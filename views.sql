@@ -15,7 +15,7 @@ CREATE VIEW student_branch_view AS
         LEFT JOIN student_branches sb ON s.student_code = sb.student_code
         LEFT JOIN branches b ON b.branch_code = sb.branch_code
         LEFT JOIN departments_relate_programs dp ON sb.program_code = dp.program_code
-        INNER JOIN department d ON dp.department_code = d.department_code
+        INNER JOIN departments d ON dp.department_code = d.department_code
         INNER JOIN programs p on dp.program_code = p.program_code;
 
 SELECT * FROM student_branch_view;
@@ -42,7 +42,7 @@ SELECT * FROM student_finished_course_view;
 -- 3. **passed_courses(student, course, credits):**
 --    - All passed courses for each student.
 
-CREATE VIEW student_finished_course_view AS
+CREATE VIEW student_passed_course_view AS
     SELECT
         s.student_code,
         CONCAT(s.first_name ,' ', s.last_name) AS student_name,
@@ -54,7 +54,7 @@ CREATE VIEW student_finished_course_view AS
         LEFT JOIN courses co ON co.course_code = sb.student_code
         WHERE co.end_date < CURRENT_DATE;
 
-SELECT * FROM student_finished_course_view;
+SELECT * FROM student_passed_course_view;
 
 -- 4. **registrations(student, course, status):**
 --    - All registered and waiting students for different courses. The status can be either 'waiting' or 'registered'.
@@ -84,12 +84,12 @@ $$ LANGUAGE plpgsql;
 CREATE VIEW student_register_status AS
     SELECT s.student_code,
     CONCAT(s.first_name ,' ', s.last_name) AS student_name,
-    CONCAT(co.name,' (', co.course_code, ')') AS course,
+    CONCAT(co.name,' (', r.course_code, ')') AS course,
     taken_course_status(r.course_code,r.student_code) as register_status,
     wl.created_date
     FROM registered r
+    LEFT JOIN courses co ON co.course_code = r.course_code
     LEFT JOIN students s ON s.student_code = r.student_code
-    LEFT JOIN courses co ON co.course_code = r.student_code
     LEFT JOIN taken t ON t.student_code = r.student_code
     LEFT JOIN waiting_list wl ON wl.student_code = r.student_code;
 
@@ -107,8 +107,8 @@ CREATE VIEW unread_mandatory_courses AS
         CONCAT(co.name,' (', co.course_code, ')') AS mandatory_course
     FROM taken t
     LEFT JOIN mandatory_branch mb ON mb.course_code = t.course_code
+    LEFT JOIN courses co ON co.course_code = t.course_code
     LEFT JOIN students s ON s.student_code = t.student_code
-    LEFT JOIN courses co ON co.course_code = t.student_code
     WHERE
     NOT EXISTS (
         SELECT 1
@@ -130,7 +130,7 @@ CREATE VIEW range_in_order_waiting_students AS
         ROW_NUMBER() OVER (PARTITION BY wl.course_code ORDER BY wl.created_date) AS waiting_queue_number,
         wl.created_date
     FROM waiting_list wl
-    LEFT JOIN courses co ON co.course_code = wl.student_code
+    LEFT JOIN courses co ON co.course_code = wl.course_code
     LEFT JOIN students s ON s.student_code = wl.student_code
     WHERE co.start_date >= CURRENT_DATE
     ORDER BY wl.course_code,wl.created_date;
