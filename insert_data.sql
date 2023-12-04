@@ -82,3 +82,5 @@ INSERT INTO course_prerequisites (course_code, prerequisites_course) VALUES
     ('C-003', 'C-002'),
     ('C-010', 'C-009');
 
+
+

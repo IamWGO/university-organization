@@ -158,4 +158,28 @@ FOR EACH ROW
 EXECUTE FUNCTION fn_grade_students_when_course_update_to_ended();
 
 
+-- function for registering students who are belong to the mandatory branch 
+
+CREATE FUNCTION fn_auto_registering_for_mandatory_branch(branch_code TEXT) RETURNS text AS $$
+DECLARE
+  v_course_row RECORD;
+  v_course_code TEXT;
+  v_student_code TEXT;
+BEGIN
+  -- get all courses in mandatory_branch
+   FOR v_course_row IN (SELECT c.course_code,sb.student_code FROM courses c 
+                      INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
+                      INNER JOIN student_branches sb ON mb.branch_code = sb.branch_code 
+                      WHERE mb.branch_code = fn_auto_registering_for_mandatory_branch.branch_code 
+                            AND c.is_opening = TRUE)
+    LOOP
+      v_course_code := v_course_row.course_code;
+      v_student_code := v_course_row.student_code;
+      -- for this case students don't need to registered.
+      INSERT INTO taken (course_code, student_code) VALUES (v_course_code, v_student_code);
+    END LOOP;
+
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
  

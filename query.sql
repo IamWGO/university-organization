@@ -1,11 +1,18 @@
+-- ------------------------------SECTION 1--------------------------------------------
+-- Delete data to start
 -- ############################################
--- Delete table to start
 DELETE FROM students;
 DELETE FROM registered;
 DELETE FROM waiting_list;
 DELETE FROM taken;
 DELETE FROM student_branches; 
 DELETE FROM student_credit_point;
+DELETE FROM mandatory_branch;
+DELETE FROM recommended_branch;
+
+
+-- ------------------------------SECTION 2--------------------------------------------
+-- register students to the course
 
 -- sample 50 rows students and student_branches 
 -- Students
@@ -61,7 +68,7 @@ INSERT INTO students (student_code, email, first_name, last_name, image, program
     ('STD00049', 'student49@example.com', 'FirstName49', 'LastName49', 'image_path_49', 'PRO-002'),
     ('STD00050', 'student50@example.com', 'FirstName50', 'LastName50', 'image_path_50', 'PRO-003');
 
-
+-- student_branches
 INSERT INTO student_branches (student_code, program_code, branch_code) VALUES
     ('STD00001', 'PRO-001', 'BR-001'), ('STD00002', 'PRO-002', 'BR-002'), ('STD00003', 'PRO-003', 'BR-003'), ('STD00004', 'PRO-001', 'BR-001'), ('STD00005', 'PRO-002', 'BR-002'), ('STD00006', 'PRO-003', 'BR-003'), ('STD00007', 'PRO-001', 'BR-001'), ('STD00008', 'PRO-002', 'BR-002'), ('STD00009', 'PRO-003', 'BR-003'), ('STD00010', 'PRO-001', 'BR-001'), ('STD00011', 'PRO-002', 'BR-002'), ('STD00012', 'PRO-003', 'BR-003'), ('STD00013', 'PRO-001', 'BR-001'), ('STD00014', 'PRO-002', 'BR-002'), ('STD00015', 'PRO-003', 'BR-003'), ('STD00016', 'PRO-001', 'BR-001'), ('STD00017', 'PRO-002', 'BR-002'), ('STD00018', 'PRO-003', 'BR-003'), ('STD00019', 'PRO-001', 'BR-001'), ('STD00020', 'PRO-002', 'BR-002'), ('STD00021', 'PRO-003', 'BR-003'), ('STD00022', 'PRO-001', 'BR-001'), ('STD00023', 'PRO-002', 'BR-002'), ('STD00024', 'PRO-003', 'BR-003'), ('STD00025', 'PRO-001', 'BR-001'), ('STD00026', 'PRO-002', 'BR-002'), ('STD00027', 'PRO-003', 'BR-003'), ('STD00028', 'PRO-001', 'BR-001'), ('STD00029', 'PRO-002', 'BR-002'), ('STD00030', 'PRO-003', 'BR-003');
 INSERT INTO student_branches (student_code, program_code, branch_code) VALUES
@@ -103,6 +110,7 @@ INSERT INTO registered (course_code, student_code) VALUES  ('C-003', 'STD00001')
 -- double check, now C-003 has added
 SELECT * FROM taken;
 
+-- ------------------------------SECTION 3--------------------------------------------
 -- ############################################
 -- - A student who has not taken any courses. (STD00001 doesn't show)
 SELECT *  FROM students s
@@ -171,6 +179,9 @@ INNER JOIN
 WHERE
   c.is_opening = TRUE AND c.course_code = 'C-003';
 
+
+-- ------------------------------SECTION 4--------------------------------------------
+-- limit students and waiting list
 -- ############################################
 -- - A waiting list can only exist for courses with limited seats.
 
@@ -254,6 +265,8 @@ FROM
   WHERE course_code = 'C-004'
 ORDER BY created_date;
 
+-- ------------------------------SECTION 5--------------------------------------------
+
 -- ############################################
 -- ## Student and Credit Point
 
@@ -308,5 +321,46 @@ INNER JOIN courses c ON c.course_code = t.course_code
 INNER JOIN students s ON s.student_code = t.student_code
 WHERE t.course_code = 'C-004';
 
--- 
+-- Now run app.py to se the list of student grade who registered in course C-004
+
+
+-- ------------------------------SECTION 6--------------------------------------------
+-- ############################################
+-- get mandatory course that students must take
+
+-- insert sample mandatory_branch
+INSERT INTO mandatory_branch (course_code, program_code, branch_code) VALUES
+    ('C-005', 'PRO-002', 'BR-002'),
+    ('C-006', 'PRO-003', 'BR-003'); 
+-- get curses that the student must take
+SELECT c.* FROM courses c 
+  INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
+ 
+-- get students who will be auto registered to the mandatory course
+SELECT c.course_code,sb.student_code FROM courses c 
+  INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
+  INNER JOIN student_branches sb ON mb.branch_code = sb.branch_code
+
+-- auto registering students who are belong to the mandatory branch 
+SELECT * 
+FROM mandatory_branch, 
+    fn_auto_registering_for_mandatory_branch(branch_code);
+
+-- check mandatory courses registered
+SELECT t.* 
+FROM taken t 
+INNER JOIN mandatory_branch mb on t.course_code = mb.course_code
+ORDER BY t.student_code 
+
+-- ############################################
+-- get recommended branch
+-- insert sample date 
+INSERT INTO recommended_branch (course_code, program_code, branch_code) VALUES
+    ('C-007', 'PRO-001', 'BR-001'), 
+    ('C-008', 'PRO-002', 'BR-002'), 
+    ('C-009', 'PRO-003', 'BR-003');
+
+-- get curses which 
+SELECT c.* FROM courses c 
+INNER JOIN recommended_branch mb ON c.course_code = mb.course_code
 

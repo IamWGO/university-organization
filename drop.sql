@@ -69,3 +69,4 @@ DROP FUNCTION IF EXISTS fn_register_from_waiting_list;
 DROP TRIGGER IF EXISTS tr_grade_students_when_course_update_to_ended ON courses ;
 DROP FUNCTION IF EXISTS fn_grade_students_when_course_update_to_ended;
 
+DROP FUNCTION IF EXISTS fn_auto_registering_for_mandatory_branch;
