@@ -109,7 +109,6 @@ CREATE TABLE IF NOT EXISTS registered (
   FOREIGN KEY (course_code)  REFERENCES courses(course_code),
   FOREIGN KEY (student_code)  REFERENCES students(student_code)
 );
- 
 
 CREATE TABLE IF NOT EXISTS taken (
   taken_id SERIAL PRIMARY KEY,

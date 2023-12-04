@@ -5,6 +5,7 @@ DELETE FROM registered;
 DELETE FROM waiting_list;
 DELETE FROM taken;
 DELETE FROM student_branches; 
+DELETE FROM student_credit_point;
 
 -- sample 50 rows students and student_branches 
 -- Students
@@ -170,10 +171,6 @@ INNER JOIN
 WHERE
   c.is_opening = TRUE AND c.course_code = 'C-003';
 
-
--- ############################################
- 
-
 -- ############################################
 -- - A waiting list can only exist for courses with limited seats.
 
@@ -256,3 +253,74 @@ FROM
   waiting_list
   WHERE course_code = 'C-004'
 ORDER BY created_date;
+
+
+-- ############################################
+-- ## Student and Credit Point
+
+-- set is_opening = FALSE
+UPDATE courses SET is_opening = FALSE
+WHERE course_code = 'C-004'
+-- check opening status
+SELECT * FROM courses WHERE course_code = 'C-004';
+-- check students have taken C-004
+SELECT * FROM taken WHERE course_code = 'C-004';
+
+-- insert credit points of students who registered C-004 
+INSERT INTO student_credit_point (taken_id, point)
+VALUES
+  (38, 25),(38, 20),(38, 15),(38, 25),
+  (39, 29),(39, 18),(39, 25),(39, 22),
+  (40, 10),(40, 19),(40, 23),(40, 17),
+  (41, 25),(41, 24),(41, 25),(41, 25),
+  (42, 22),(42, 25),(42, 19),(42, 23),
+  (43, 25),(43, 24),(43, 18),(43, 15),
+  (44, 25),(44, 25),(44, 25),(44, 25),
+  (45, 24),(45, 21),(45, 25),(45, 25),
+  (48, 25),(48, 25),(48, 13),(48, 25);
+
+-- summary points with no grade
+SELECT t.taken_id, c.course_code, s.student_code,
+   c.name as course_name, CONCAT(s.first_name ,' ', s.last_name) AS student_name,
+   (SELECT SUM(point) 
+      FROM student_credit_point 
+      WHERE taken_id = t.taken_id 
+      GROUP BY taken_id
+    ) as total_point, grade
+FROM taken t
+INNER JOIN courses c ON c.course_code = t.course_code 
+INNER JOIN students s ON s.student_code = t.student_code
+WHERE t.course_code = 'C-004';
+
+-- set is_ended = TRUE
+UPDATE courses SET is_ended = TRUE
+WHERE course_code = 'C-004'
+-- check course status
+SELECT * FROM courses WHERE course_code = 'C-004';
+-- test taken_id = 38
+SELECT SUM(point) FROM student_credit_point WHERE taken_id = 38 GROUP BY taken_id
+
+-- get student, course, summary of credit point
+SELECT t.taken_id, c.course_code, s.student_code,
+   c.name as course_name, CONCAT(s.first_name ,' ', s.last_name) AS student_name,
+   (SELECT SUM(point) 
+      FROM student_credit_point 
+      WHERE taken_id = t.taken_id 
+      GROUP BY taken_id
+    ) as total_point,
+    grade
+
+FROM taken t
+INNER JOIN courses c ON c.course_code = t.course_code 
+INNER JOIN students s ON s.student_code = t.student_code
+WHERE t.course_code = 'C-004';
+
+-- grading if total point < 70 then not pass the course
+SELECT * FROM taken 
+WHERE course_code = 'C-004' 
+AND (SELECT SUM(point) 
+      FROM student_credit_point 
+      WHERE taken_id = t.taken_id 
+      GROUP BY taken_id
+    ) > 0;
+

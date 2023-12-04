@@ -120,3 +120,42 @@ CREATE TRIGGER tr_register_from_waiting_list
 AFTER DELETE ON taken
 FOR EACH ROW
 EXECUTE FUNCTION fn_register_from_waiting_list();
+
+
+-- ## Trigger function for grading for ended course
+CREATE OR REPLACE FUNCTION fn_grade_students_when_course_update_to_ended()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_taken_row RECORD;
+  v_taken_id INT;
+BEGIN
+  -- Check if the course is updated and is_ended = false
+  IF NEW.is_ended = TRUE AND OLD.is_ended = FALSE THEN
+
+    FOR v_taken_row IN SELECT taken_id FROM taken WHERE course_code = NEW.course_code
+    LOOP
+      v_taken_id := v_taken_row.taken_id;
+      -- Update the grade in the taken table based on the found taken_id
+      UPDATE taken
+      SET grade = CASE
+                  WHEN (SELECT SUM(point) FROM student_credit_point WHERE taken_id = v_taken_id) >= 90 THEN '4'
+                  WHEN (SELECT SUM(point) FROM student_credit_point WHERE taken_id = v_taken_id) >= 80 THEN '3'
+                  WHEN (SELECT SUM(point) FROM student_credit_point WHERE taken_id = v_taken_id) >= 70 THEN '2'
+                  ELSE 'U'
+                END
+      WHERE taken_id = v_taken_id;
+    END LOOP;
+
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_grade_students_when_course_update_to_ended
+AFTER UPDATE ON courses
+FOR EACH ROW
+EXECUTE FUNCTION fn_grade_students_when_course_update_to_ended();
+
+
+ 

@@ -66,3 +66,6 @@ DROP FUNCTION IF EXISTS fn_insert_register_or_wait;
 DROP TRIGGER IF EXISTS tr_register_from_waiting_list ON taken ;
 DROP FUNCTION IF EXISTS fn_register_from_waiting_list;
 
+DROP TRIGGER IF EXISTS tr_grade_students_when_course_update_to_ended ON courses ;
+DROP FUNCTION IF EXISTS fn_grade_students_when_course_update_to_ended;
+

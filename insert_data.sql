@@ -1,3 +1,10 @@
+-- not included ables below 
+--  students;
+--  registered;
+--  waiting_list;
+--  taken;
+--  student_branches; 
+
 -- Departments
 INSERT INTO departments (department_code, department_name) VALUES
   ('DEP-001', 'Computer Science'),
