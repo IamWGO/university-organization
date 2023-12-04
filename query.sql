@@ -254,7 +254,6 @@ FROM
   WHERE course_code = 'C-004'
 ORDER BY created_date;
 
-
 -- ############################################
 -- ## Student and Credit Point
 
@@ -295,10 +294,6 @@ WHERE t.course_code = 'C-004';
 -- set is_ended = TRUE
 UPDATE courses SET is_ended = TRUE
 WHERE course_code = 'C-004'
--- check course status
-SELECT * FROM courses WHERE course_code = 'C-004';
--- test taken_id = 38
-SELECT SUM(point) FROM student_credit_point WHERE taken_id = 38 GROUP BY taken_id
 
 -- get student, course, summary of credit point
 SELECT t.taken_id, c.course_code, s.student_code,
@@ -307,20 +302,11 @@ SELECT t.taken_id, c.course_code, s.student_code,
       FROM student_credit_point 
       WHERE taken_id = t.taken_id 
       GROUP BY taken_id
-    ) as total_point,
-    grade
-
+    ) as total_point, grade
 FROM taken t
 INNER JOIN courses c ON c.course_code = t.course_code 
 INNER JOIN students s ON s.student_code = t.student_code
 WHERE t.course_code = 'C-004';
 
--- grading if total point < 70 then not pass the course
-SELECT * FROM taken 
-WHERE course_code = 'C-004' 
-AND (SELECT SUM(point) 
-      FROM student_credit_point 
-      WHERE taken_id = t.taken_id 
-      GROUP BY taken_id
-    ) > 0;
+-- 
 
