@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS courses (
   course_code VARCHAR(6) PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
   credits INT,
-  start_date DATE,
-  end_date DATE,
+  is_opening BOOLEAN,
+  is_ended BOOLEAN,
   department_code VARCHAR(10) NOT NULL,
   FOREIGN KEY (department_code) REFERENCES departments(department_code)
 );

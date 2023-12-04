@@ -5,29 +5,67 @@ DECLARE
   current_taken INT;
   current_capacity INT;
 BEGIN
-  
-  SELECT COUNT(*) INTO current_taken
-  FROM taken
-  WHERE course_code = NEW.course_code;
+    -- BEGIN
+    -- CHECK - return if program has started
+    IF EXISTS (
+        SELECT 1 FROM courses c
+        WHERE is_opening = FALSE
+        AND course_code = NEW.course_code
+    ) THEN 
+        RAISE NOTICE 'course has not started yet : %', NEW.course_code;
+        RETURN NULL;
+    END IF; 
 
-  SELECT capacity INTO current_capacity
-  FROM limited_courses
-  WHERE course_code = NEW.course_code;
+    -- CHECK - return if student not pass all prerequisites course before register the next course
+    IF EXISTS (
+        SELECT 1 FROM taken t
+        WHERE t.student_code = NEW.student_code
+        AND t.course_code IN 
+        (SELECT prerequisites_course as requied 
+            FROM  course_prerequisites cp  WHERE cp.course_code = NEW.course_code)
+        AND (grade = NULL OR grade = 'U')
+    ) THEN 
+        RAISE NOTICE 'student not pass all prerequisites course: %', NEW.student_code;
+        RETURN NULL;
+    END IF; 
 
-  IF current_taken < current_capacity THEN
-    -- insert into registered
-    INSERT INTO taken (course_code, student_code)
-    VALUES (NEW.course_code, NEW.student_code);
-    RAISE NOTICE 'Insert % into registered for the course %.', NEW.student_code, NEW.course_code;
-  ELSE
-    -- insert into waiting_list
-    INSERT INTO waiting_list (course_code, student_code, created_date)
-    VALUES (NEW.course_code, NEW.student_code, CURRENT_TIMESTAMP);
-    RAISE NOTICE 'Insert % into waiting list for the course %.', NEW.student_code, NEW.course_code;
-  END IF; 
+    -- CHECK - register if the course has no limit registered
+    IF NOT EXISTS (
+        SELECT 1
+        FROM limited_courses wl
+        WHERE wl.course_code = NEW.course_code
+    ) THEN 
+        RAISE NOTICE 'register to the course has no limit registered: %', NEW.student_code;
+        INSERT INTO taken (course_code, student_code)
+        VALUES (NEW.course_code, NEW.student_code);
+        RETURN NEW;
+    END IF; 
 
-  RETURN NEW;
+    -- CHECK - A waiting list can only exist for courses with limited seats.
+    SELECT COUNT(*) INTO current_taken
+    FROM taken
+    WHERE course_code = NEW.course_code;
 
+    SELECT capacity INTO current_capacity
+    FROM limited_courses
+    WHERE course_code = NEW.course_code;
+
+    IF current_taken < current_capacity THEN
+        -- insert into registered
+        RAISE NOTICE 'Insert % into registered for the course %.', NEW.student_code, NEW.course_code;
+        INSERT INTO taken (course_code, student_code)
+        VALUES (NEW.course_code, NEW.student_code);
+        
+    ELSE
+        -- insert into waiting_list
+        RAISE NOTICE 'Insert % into waiting list for the course %.', NEW.student_code, NEW.course_code;
+        INSERT INTO waiting_list (course_code, student_code, created_date)
+        VALUES (NEW.course_code, NEW.student_code, CURRENT_TIMESTAMP);
+        
+    END IF; 
+
+    RETURN NEW;
+    -- END
 END;
 $$ LANGUAGE plpgsql;
 
@@ -36,8 +74,6 @@ BEFORE INSERT ON registered
 FOR EACH ROW
 EXECUTE FUNCTION fn_insert_register_or_wait();
 
-
-
 -- ## Trigger function for registered when a taken record is deleted
 CREATE OR REPLACE FUNCTION fn_register_from_waiting_list()
 RETURNS TRIGGER AS $$
@@ -45,6 +81,7 @@ DECLARE
   wl_course_code TEXT;
   wl_student_code TEXT;
 BEGIN
+
     -- get the first order of waiting list
     SELECT 
         wl.student_code,
@@ -55,7 +92,7 @@ BEGIN
     FROM waiting_list wl
     WHERE wl.course_code = OLD.course_code
     ORDER BY wl.created_date  LIMIT 1; 
-    
+
     RAISE NOTICE 'PROCESS  %   course %.', wl_student_code, wl_course_code;
 
     IF EXISTS (
@@ -83,23 +120,3 @@ CREATE TRIGGER tr_register_from_waiting_list
 AFTER DELETE ON taken
 FOR EACH ROW
 EXECUTE FUNCTION fn_register_from_waiting_list();
-
-
-
---   -- Check if there are students in the waiting list for the deleted course
---   IF EXISTS (
---     SELECT 1
---     FROM waiting_list wl
---     WHERE wl.course_code = OLD.course_code
---   ) THEN
---     -- Move the first student from the waiting list to the registered list
---     INSERT INTO registered (course_code, student_code)
---     VALUES (wl_course_code, wl_student_code);
-
---     -- Delete the corresponding record from the waiting list
---     DELETE FROM waiting_list
---     WHERE course_code = wl_course_code 
---       AND student_code = wl_student_code;
---     RETURN NULL
-
---   END IF;
