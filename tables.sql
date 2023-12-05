@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS programs (
 CREATE TABLE IF NOT EXISTS departments_relate_programs (
   department_code VARCHAR(10) NOT NULL,
   program_code VARCHAR(10) NOT NULL,
-  -- UNIQUE (department_code, program_code),
+  UNIQUE (department_code, program_code),
   FOREIGN KEY (department_code)  REFERENCES departments(department_code),
   FOREIGN KEY (program_code)  REFERENCES programs(program_code)
 );

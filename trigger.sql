@@ -19,7 +19,7 @@ BEGIN
     -- CHECK - return if student not pass all prerequisites course before register the next course
     IF EXISTS (
         SELECT 1 FROM taken t
-        WHERE t.student_code = NEW.student_code
+        WHERE t.student_code = NEW.student_code -- AND  t.course_code = NEW.course_code
         AND t.course_code IN 
         (SELECT prerequisites_course as requied 
             FROM  course_prerequisites cp  WHERE cp.course_code = NEW.course_code)
@@ -69,10 +69,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+
 CREATE TRIGGER tr_insert_register_or_wait
 BEFORE INSERT ON registered
 FOR EACH ROW
 EXECUTE FUNCTION fn_insert_register_or_wait();
+
 
 -- ## Trigger function for registered when a taken record is deleted
 CREATE OR REPLACE FUNCTION fn_register_from_waiting_list()
@@ -81,7 +83,6 @@ DECLARE
   wl_course_code TEXT;
   wl_student_code TEXT;
 BEGIN
-
     -- get the first order of waiting list
     SELECT 
         wl.student_code,

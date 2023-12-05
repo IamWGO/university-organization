@@ -83,7 +83,9 @@ INSERT INTO taken (course_code, student_code,grade) VALUES
 
 -- check all tacken courses
 SELECT * FROM taken WHERE student_code = 'STD00001'; 
+
 -- can't register because student didn't pass C-002
+-- check fn_insert_register_or_wait in trigger.sql
 INSERT INTO registered (course_code, student_code) VALUES  ('C-003', 'STD00001');
 -- check if student didn't pass any courses
 SELECT * FROM taken t
@@ -105,7 +107,9 @@ AND t.course_code IN
   (SELECT prerequisites_course as requied 
     FROM  course_prerequisites cp  WHERE cp.course_code = 'C-003')
 AND (grade = NULL OR grade = 'U')
+
 -- register again and now student can register to the course
+-- check fn_insert_register_or_wait in trigger.sql
 INSERT INTO registered (course_code, student_code) VALUES  ('C-003', 'STD00001');
 -- double check, now C-003 has added
 SELECT * FROM taken;
@@ -181,7 +185,7 @@ WHERE
 
 
 -- ------------------------------SECTION 4--------------------------------------------
--- limit students and waiting list
+-- limit course and waiting list
 -- ############################################
 -- - A waiting list can only exist for courses with limited seats.
 
@@ -189,6 +193,7 @@ WHERE
 SELECT * FROM limited_courses wl;
  
 -- register student to course C-004
+-- check fn_insert_register_or_wait in trigger.sql
 INSERT INTO registered (course_code, student_code)
 VALUES
   ('C-004', 'STD00001'), 
@@ -223,11 +228,11 @@ VALUES
   ('C-004', 'STD00030');
 
 -- CHECK for register student
-SELECT count(*) as registered FROM registered;
+SELECT count(*) as registered FROM registered WHERE course_code = 'C-004';
 
-SELECT count(*) as waiting_list FROM waiting_list;
+SELECT count(*) as waiting_list FROM waiting_list WHERE course_code = 'C-004';
 
-SELECT count(*) as taken FROM taken;
+SELECT count(*) as taken FROM taken WHERE course_code = 'C-004';
 
 SELECT * FROM registered WHERE course_code = 'C-004';
 SELECT * FROM waiting_list WHERE course_code = 'C-004';
@@ -246,13 +251,16 @@ ORDER BY created_date;
 
 --C-004	STD00011
 -- TEST  
+-- C-004	STD00010 added to taken
+
 -- Remove the last record in taken table -- C-004	STD00010
 -- registered trigger function  when a taken record is deleted
+-- Check file fn_register_from_waiting_list in trigger.sql
 DELETE FROM taken WHERE taken_id = (SELECT taken_id FROM taken
                                     WHERE course_code = 'C-004'
-                                    ORDER BY taken_id DESC LIMIT 1);
--- C-004	STD00010 added to taken
-SELECT * FROM taken WHERE course_code = 'C-004' ORDER BY taken_id DESC LIMIT 1;
+                                    ORDER BY taken_id ASC LIMIT 1);
+
+SELECT * FROM taken WHERE course_code = 'C-004' ORDER BY taken_id DESC;
 
 -- C-004	STD00010 has removed from waiting_list
 SELECT
@@ -270,6 +278,7 @@ ORDER BY created_date;
 -- ############################################
 -- ## Student and Credit Point
 
+-- the stuedent not allow registering the course. 
 -- set is_opening = FALSE
 UPDATE courses SET is_opening = FALSE
 WHERE course_code = 'C-004'
@@ -282,8 +291,6 @@ SELECT * FROM taken WHERE course_code = 'C-004';
 -- insert credit points of students who registered C-004 
 INSERT INTO student_credit_point (taken_id, point)
 VALUES
-  (6, 25),(6, 20),(6, 15),(6, 25),
-  (7, 29),(7, 18),(7, 25),(7, 22),
   (8, 10),(8, 19),(8, 23),(8, 17),
   (9, 25),(9, 24),(9, 25),(9, 25),
   (10, 22),(10, 25),(10, 19),(10, 23),
@@ -291,6 +298,8 @@ VALUES
   (12, 25),(12, 25),(12, 25),(12, 25),
   (13, 24),(13, 21),(13, 25),(13, 25),
   (14, 25),(14, 25),(14, 13),(14, 25);
+  
+SELECT * FROM student_credit_point WHERE taken_id = 8
 
 -- summary points with no grade
 SELECT t.taken_id, c.course_code, s.student_code,
@@ -306,6 +315,7 @@ INNER JOIN students s ON s.student_code = t.student_code
 WHERE t.course_code = 'C-004';
 
 -- set is_ended = TRUE
+-- check fn_grade_students_when_course_update_to_ended in trigger.sql
 UPDATE courses SET is_ended = TRUE
 WHERE course_code = 'C-004'
 
@@ -337,12 +347,13 @@ INSERT INTO mandatory_branch (course_code, program_code, branch_code) VALUES
 SELECT c.* FROM courses c 
   INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
  
--- get students who will be auto registered to the mandatory course
+-- get students who "will be" auto registered to the mandatory course
 SELECT c.course_code,sb.student_code FROM courses c 
   INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
   INNER JOIN student_branches sb ON mb.branch_code = sb.branch_code
 
 -- auto registering students who are belong to the mandatory branch 
+-- check fn_auto_registering_for_mandatory_branch in query
 SELECT * 
 FROM mandatory_branch, 
     fn_auto_registering_for_mandatory_branch(branch_code);
