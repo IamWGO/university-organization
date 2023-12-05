@@ -186,7 +186,7 @@ WHERE
 -- - A waiting list can only exist for courses with limited seats.
 
 -- LIST courses has limit 
-SELECT * FROM limited_courses wl
+SELECT * FROM limited_courses wl;
  
 -- register student to course C-004
 INSERT INTO registered (course_code, student_code)
@@ -278,18 +278,19 @@ SELECT * FROM courses WHERE course_code = 'C-004';
 -- check students have taken C-004
 SELECT * FROM taken WHERE course_code = 'C-004';
 
+-- ** Opps : taken_id in table taken  need to match with taken_id in table student_credit_point 
 -- insert credit points of students who registered C-004 
 INSERT INTO student_credit_point (taken_id, point)
 VALUES
-  (38, 25),(38, 20),(38, 15),(38, 25),
-  (39, 29),(39, 18),(39, 25),(39, 22),
-  (40, 10),(40, 19),(40, 23),(40, 17),
-  (41, 25),(41, 24),(41, 25),(41, 25),
-  (42, 22),(42, 25),(42, 19),(42, 23),
-  (43, 25),(43, 24),(43, 18),(43, 15),
-  (44, 25),(44, 25),(44, 25),(44, 25),
-  (45, 24),(45, 21),(45, 25),(45, 25),
-  (48, 25),(48, 25),(48, 13),(48, 25);
+  (6, 25),(6, 20),(6, 15),(6, 25),
+  (7, 29),(7, 18),(7, 25),(7, 22),
+  (8, 10),(8, 19),(8, 23),(8, 17),
+  (9, 25),(9, 24),(9, 25),(9, 25),
+  (10, 22),(10, 25),(10, 19),(10, 23),
+  (11, 25),(11, 24),(11, 18),(11, 15),
+  (12, 25),(12, 25),(12, 25),(12, 25),
+  (13, 24),(13, 21),(13, 25),(13, 25),
+  (14, 25),(14, 25),(14, 13),(14, 25);
 
 -- summary points with no grade
 SELECT t.taken_id, c.course_code, s.student_code,

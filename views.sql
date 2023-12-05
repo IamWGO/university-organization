@@ -23,36 +23,40 @@ SELECT * FROM student_branch_view;
 -- ##########################################################
 -- 2. **finished_courses(student, course, grade, credits):**
 --    - All completed courses for each student, along with grades and credit points.
+DROP VIEW student_finished_course_view;
 
 CREATE VIEW student_finished_course_view AS
-    SELECT 
-        s.student_code,
-        CONCAT(s.first_name ,' ', s.last_name) AS student_name,
-        CONCAT(co.name,' (', co.course_code, ')') AS course,
-        t.grade,
+    SELECT s.student_code, s.first_name, s.last_name,
+        c.name as course_name, c.course_code, t.grade,
         (SELECT COUNT(*) FROM student_credit_point where taken_id = t.taken_id) AS credit
-        FROM students s
-        LEFT JOIN student_branches sb ON s.student_code = sb.student_code
-        LEFT JOIN taken t ON s.student_code = sb.student_code
-        LEFT JOIN courses co ON co.course_code = sb.student_code
-        WHERE t.grade <> NULL;
+    FROM taken t
+        INNER JOIN students s ON t.student_code = s.student_code
+        INNER JOIN courses c ON  c.course_code = t.course_code
+        WHERE t.grade <> NULL OR grade <> 'U';
  
 SELECT * FROM student_finished_course_view;
 
+
+
 -- 3. **passed_courses(student, course, credits):**
 --    - All passed courses for each student.
+DROP VIEW student_passed_course_view;
 
 CREATE VIEW student_passed_course_view AS
     SELECT
         s.student_code,
         CONCAT(s.first_name ,' ', s.last_name) AS student_name,
-        CONCAT(co.name,' (', co.course_code, ')') AS course,
-        (SELECT COUNT(*) FROM student_credit_point where taken_id = t.taken_id) AS credit
-        FROM students s
-        LEFT JOIN student_branches sb ON s.student_code = sb.student_code
-        LEFT JOIN taken t ON s.student_code = sb.student_code
-        LEFT JOIN courses co ON co.course_code = sb.student_code
-        WHERE co.end_date < CURRENT_DATE;
+        CONCAT(c.name,' (', c.course_code, ')') AS course,
+        (SELECT SUM(point) 
+            FROM student_credit_point 
+            WHERE taken_id = t.taken_id 
+            GROUP BY taken_id
+            ) as total_point
+        FROM taken t
+        INNER JOIN students s ON t.student_code = s.student_code
+        INNER JOIN courses c ON  c.course_code = t.course_code
+        WHERE c.is_ended = TRUE;
+        
 
 SELECT * FROM student_passed_course_view;
 
@@ -60,14 +64,16 @@ SELECT * FROM student_passed_course_view;
 --    - All registered and waiting students for different courses. The status can be either 'waiting' or 'registered'.
 
 -- get status either 'waiting' or 'registered'
-CREATE FUNCTION taken_course_status(course_code text,student_code text) RETURNS text AS $$
+DROP FUNCTION IF EXISTS fn_taken_course_status;
+
+CREATE FUNCTION fn_taken_course_status(course_code text,student_code text) RETURNS text AS $$
 DECLARE message text;
 DECLARE is_waiting INT; -- 1 : waiting, 0 : registered
 BEGIN
     SELECT COUNT(*) INTO is_waiting
 	FROM waiting_list wl
-	WHERE wl.course_code = taken_course_status.course_code 
-    AND wl.student_code = taken_course_status.student_code;
+	WHERE wl.course_code = fn_taken_course_status.course_code 
+    AND wl.student_code = fn_taken_course_status.student_code;
 
     CASE 
 	WHEN is_waiting = 0 THEN
@@ -85,7 +91,7 @@ CREATE VIEW student_register_status AS
     SELECT s.student_code,
     CONCAT(s.first_name ,' ', s.last_name) AS student_name,
     CONCAT(co.name,' (', r.course_code, ')') AS course,
-    taken_course_status(r.course_code,r.student_code) as register_status,
+    fn_taken_course_status(r.course_code,r.student_code) as register_status,
     wl.created_date
     FROM registered r
     LEFT JOIN courses co ON co.course_code = r.course_code
@@ -100,28 +106,30 @@ SELECT * FROM student_register_status;
 --    - Unread mandatory courses for each student.
 -- Create a view for unread mandatory courses
 
--- ??? Check again
+DROP VIEW unread_mandatory_courses;
+
 CREATE VIEW unread_mandatory_courses AS
-    SELECT s.student_code,
-        CONCAT(s.first_name ,' ', s.last_name) AS student_name,
-        CONCAT(co.name,' (', co.course_code, ')') AS mandatory_course
+    SELECT  s.student_code, s.first_name, s.last_name,
+        c.name as course_name, c.course_code
     FROM taken t
-    LEFT JOIN mandatory_branch mb ON mb.course_code = t.course_code
-    LEFT JOIN courses co ON co.course_code = t.course_code
+    INNER JOIN courses c ON c.course_code = t.course_code
+    INNER JOIN mandatory_branch mb ON mb.course_code = c.course_code
     LEFT JOIN students s ON s.student_code = t.student_code
-    WHERE
-    NOT EXISTS (
-        SELECT 1
-        FROM taken ta
-        WHERE ta.course_code = co.course_code
-        AND ta.student_code = s.student_code
-    );
+    -- WHERE
+    --     NOT EXISTS (
+    --         SELECT 1
+    --         FROM taken ta
+    --         WHERE ta.course_code = t.course_code
+    --         AND ta.student_code = t.student_code
+    --     );
+
 
 SELECT * FROM unread_mandatory_courses;
 
 -- ##########################################################
 -- 6. **course_queue_position(course, student, place):**
 --    - All waiting students, ranked in order on the waiting list.  
+DROP VIEW range_in_order_waiting_students;
 
 CREATE VIEW range_in_order_waiting_students AS
     SELECT wl.student_code,
@@ -132,10 +140,11 @@ CREATE VIEW range_in_order_waiting_students AS
     FROM waiting_list wl
     LEFT JOIN courses co ON co.course_code = wl.course_code
     LEFT JOIN students s ON s.student_code = wl.student_code
-    WHERE co.start_date >= CURRENT_DATE
+    WHERE co.is_opening = TRUE -- only opening registred comment out if you want to show all
     ORDER BY wl.course_code,wl.created_date;
 
 SELECT * FROM range_in_order_waiting_students;
+
  
 
 
