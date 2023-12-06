@@ -20,27 +20,41 @@ try:
     
     cursor = connection.cursor()  
     # ------------------------------------------------------------  
-    # ## 1. Get course description for C-004
-    
-    # query = "SELECT * FROM courses WHERE course_code = %s"
-    # filter_course = 'C-004' # Replace with the course_code you want to filter
-    # cursor.execute(query, (filter_course,))
+    # # Get register status of a student who registered in course C-004 
+    function_query = """
+        CREATE FUNCTION fn_taken_course_status(course_code text,student_code text) RETURNS text AS $$
+            DECLARE message text;
+            DECLARE is_waiting INT; -- 1 : waiting, 0 : registered
+            BEGIN
+                SELECT COUNT(*) INTO is_waiting
+                FROM waiting_list wl
+                WHERE wl.course_code = fn_taken_course_status.course_code 
+                AND wl.student_code = fn_taken_course_status.student_code;
 
-    # ------------------------------------------------------------  
-    # ## 2. Get student who registered course C-004 with grade and all detail
+                CASE 
+                WHEN is_waiting = 0 THEN
+                    message:= 'registered';
+                ELSE 
+                    message:= 'waiting';
+                END CASE;
+                RETURN message;
+            END;
+            $$ LANGUAGE plpgsql; 
+        """
+    cursor.execute(function_query)
+
     query = """
-        SELECT t.taken_id, c.course_code, s.student_code,
-        c.name as course_name, CONCAT(s.first_name ,' ', s.last_name) AS student_name,
-        (SELECT SUM(point) 
-            FROM student_credit_point 
-            WHERE taken_id = t.taken_id 
-            GROUP BY taken_id
-            ) as total_point, grade
-        FROM taken t
-        INNER JOIN courses c ON c.course_code = t.course_code 
-        INNER JOIN students s ON s.student_code = t.student_code
-        WHERE t.course_code = %s;
-    """
+        SELECT s.student_code,
+        CONCAT(s.first_name ,' ', s.last_name) AS student_name,
+        CONCAT(co.name,' (', r.course_code, ')') AS course,
+        fn_taken_course_status(r.course_code,r.student_code) as register_status
+        FROM registered r
+        LEFT JOIN courses co ON co.course_code = r.course_code
+        LEFT JOIN students s ON s.student_code = r.student_code
+        LEFT JOIN taken t ON t.student_code = r.student_code
+        LEFT JOIN waiting_list wl ON wl.student_code = r.student_code
+        WHERE r.course_code = %s;
+        """
     filter_course = 'C-004' # Replace with the course_code you want to filter
     cursor.execute(query, (filter_course,))
 

@@ -63,29 +63,6 @@ SELECT * FROM student_passed_course_view;
 -- 4. **registrations(student, course, status):**
 --    - All registered and waiting students for different courses. The status can be either 'waiting' or 'registered'.
 
--- get status either 'waiting' or 'registered'
-DROP FUNCTION IF EXISTS fn_taken_course_status;
-
-CREATE FUNCTION fn_taken_course_status(course_code text,student_code text) RETURNS text AS $$
-DECLARE message text;
-DECLARE is_waiting INT; -- 1 : waiting, 0 : registered
-BEGIN
-    SELECT COUNT(*) INTO is_waiting
-	FROM waiting_list wl
-	WHERE wl.course_code = fn_taken_course_status.course_code 
-    AND wl.student_code = fn_taken_course_status.student_code;
-
-    CASE 
-	WHEN is_waiting = 0 THEN
-		message:= 'registered';
-	ELSE 
-		message:= 'waiting';
-	END CASE;
-    RETURN message;
-END;
-$$ LANGUAGE plpgsql; 
-
-
 -- create view
 CREATE VIEW student_register_status AS
     SELECT s.student_code,

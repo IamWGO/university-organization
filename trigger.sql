@@ -184,3 +184,25 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
  
+
+
+-- ## Function for show result in app.py
+-- get status either 'waiting' or 'registered'
+CREATE FUNCTION fn_taken_course_status(course_code text,student_code text) RETURNS text AS $$
+DECLARE message text;
+DECLARE is_waiting INT; -- 1 : waiting, 0 : registered
+BEGIN
+    SELECT COUNT(*) INTO is_waiting
+	FROM waiting_list wl
+	WHERE wl.course_code = fn_taken_course_status.course_code 
+    AND wl.student_code = fn_taken_course_status.student_code;
+
+    CASE 
+	WHEN is_waiting = 0 THEN
+		message:= 'registered';
+	ELSE 
+		message:= 'waiting';
+	END CASE;
+    RETURN message;
+END;
+$$ LANGUAGE plpgsql; 

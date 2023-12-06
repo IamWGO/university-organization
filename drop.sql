@@ -71,3 +71,4 @@ DROP FUNCTION IF EXISTS fn_grade_students_when_course_update_to_ended;
 
 DROP FUNCTION IF EXISTS fn_auto_registering_for_mandatory_branch;
 
+DROP FUNCTION IF EXISTS fn_taken_course_status;

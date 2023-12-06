@@ -41,11 +41,7 @@ INSERT INTO courses (course_code, name, credits, is_opening, is_ended, departmen
   ('C-003', 'Mechanics 101', 100, TRUE, FALSE, 'DEP-003'),
   ('C-004', 'Database Management', 100, TRUE, FALSE, 'DEP-001'),
   ('C-005', 'Electromagnetic Fields', 100, TRUE, FALSE, 'DEP-002'),
-  ('C-006', 'Thermodynamics', 100, TRUE, FALSE, 'DEP-003'),
-  ('C-007', 'Software Engineering', 100, TRUE, FALSE, 'DEP-001'),
-  ('C-008', 'Control Systems', 100, TRUE, FALSE, 'DEP-002'),
-  ('C-009', 'Materials Science', 100, TRUE, FALSE, 'DEP-003'),
-  ('C-010', 'Algorithms and Data Structures', 100, TRUE, FALSE, 'DEP-001');
+  ('C-006', 'Thermodynamics', 100, TRUE, FALSE, 'DEP-003');
 
 INSERT INTO classifications (classified_code, name) VALUES
     ('MATH', 'mathematical courses'),
@@ -58,29 +54,13 @@ INSERT INTO classified (classified_code, course_code) VALUES
     ('SEMINAR', 'C-003'),
     ('MATH', 'C-004'),
     ('RESEARCH', 'C-005'),
-    ('SEMINAR', 'C-006'),
-    ('MATH', 'C-007'),
-    ('RESEARCH', 'C-008'),
-    ('SEMINAR', 'C-009'),
-    ('MATH', 'C-010');
+    ('SEMINAR', 'C-006');
 
 
--- Limited courses
+-- Limited courses  limit 5 students 
 INSERT INTO limited_courses (capacity, course_code)
 VALUES
-  (10,'C-001'),
-  (10,'C-003'),
-  (10,'C-004'),
-  (10,'C-005'),
-  (10,'C-006'),
-  (10,'C-007'),
-  (10,'C-010');
-
--- course prerequisites
-INSERT INTO course_prerequisites (course_code, prerequisites_course) VALUES
-    ('C-003', 'C-001'),
-    ('C-003', 'C-002'),
-    ('C-010', 'C-009');
-
-
+  (5,'C-001'),
+  (5,'C-003'),
+  (5,'C-004');
 

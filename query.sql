@@ -1,5 +1,5 @@
 -- ------------------------------SECTION 1--------------------------------------------
--- Delete data to start
+-- Delete data : only in case of you want to start over
 -- ############################################
 DELETE FROM students;
 DELETE FROM registered;
@@ -36,44 +36,20 @@ INSERT INTO students (student_code, email, first_name, last_name, image, program
     ('STD00017', 'student17@example.com', 'FirstName17', 'LastName17', 'image_path_17', 'PRO-003'),
     ('STD00018', 'student18@example.com', 'FirstName18', 'LastName18', 'image_path_18', 'PRO-001'),
     ('STD00019', 'student19@example.com', 'FirstName19', 'LastName19', 'image_path_19', 'PRO-002'),
-    ('STD00020', 'student20@example.com', 'FirstName20', 'LastName20', 'image_path_20', 'PRO-003'),
-     ('STD00021', 'student21@example.com', 'FirstName21', 'LastName21', 'image_path_21', 'PRO-001'),
-    ('STD00022', 'student22@example.com', 'FirstName22', 'LastName22', 'image_path_22', 'PRO-002'),
-    ('STD00023', 'student23@example.com', 'FirstName23', 'LastName23', 'image_path_23', 'PRO-003'),
-    ('STD00024', 'student24@example.com', 'FirstName24', 'LastName24', 'image_path_24', 'PRO-001'),
-    ('STD00025', 'student25@example.com', 'FirstName25', 'LastName25', 'image_path_25', 'PRO-002'),
-    ('STD00026', 'student26@example.com', 'FirstName26', 'LastName26', 'image_path_26', 'PRO-003'),
-    ('STD00027', 'student27@example.com', 'FirstName27', 'LastName27', 'image_path_27', 'PRO-001'),
-    ('STD00028', 'student28@example.com', 'FirstName28', 'LastName28', 'image_path_28', 'PRO-002'),
-    ('STD00029', 'student29@example.com', 'FirstName29', 'LastName29', 'image_path_29', 'PRO-003'),
-    ('STD00030', 'student30@example.com', 'FirstName30', 'LastName30', 'image_path_30', 'PRO-001'),
-    ('STD00031', 'student31@example.com', 'FirstName31', 'LastName31', 'image_path_31', 'PRO-002'),
-    ('STD00032', 'student32@example.com', 'FirstName32', 'LastName32', 'image_path_32', 'PRO-003'),
-    ('STD00033', 'student33@example.com', 'FirstName33', 'LastName33', 'image_path_33', 'PRO-001'),
-    ('STD00034', 'student34@example.com', 'FirstName34', 'LastName34', 'image_path_34', 'PRO-002'),
-    ('STD00035', 'student35@example.com', 'FirstName35', 'LastName35', 'image_path_35', 'PRO-003'),
-    ('STD00036', 'student36@example.com', 'FirstName36', 'LastName36', 'image_path_36', 'PRO-001'),
-    ('STD00037', 'student37@example.com', 'FirstName37', 'LastName37', 'image_path_37', 'PRO-002'),
-    ('STD00038', 'student38@example.com', 'FirstName38', 'LastName38', 'image_path_38', 'PRO-003'),
-    ('STD00039', 'student39@example.com', 'FirstName39', 'LastName39', 'image_path_39', 'PRO-001'),
-    ('STD00040', 'student40@example.com', 'FirstName40', 'LastName40', 'image_path_40', 'PRO-002'),
-    ('STD00041', 'student41@example.com', 'FirstName41', 'LastName41', 'image_path_41', 'PRO-003'),
-    ('STD00042', 'student42@example.com', 'FirstName42', 'LastName42', 'image_path_42', 'PRO-001'),
-    ('STD00043', 'student43@example.com', 'FirstName43', 'LastName43', 'image_path_43', 'PRO-002'),
-    ('STD00044', 'student44@example.com', 'FirstName44', 'LastName44', 'image_path_44', 'PRO-003'),
-    ('STD00045', 'student45@example.com', 'FirstName45', 'LastName45', 'image_path_45', 'PRO-001'),
-    ('STD00046', 'student46@example.com', 'FirstName46', 'LastName46', 'image_path_46', 'PRO-002'),
-    ('STD00047', 'student47@example.com', 'FirstName47', 'LastName47', 'image_path_47', 'PRO-003'),
-    ('STD00048', 'student48@example.com', 'FirstName48', 'LastName48', 'image_path_48', 'PRO-001'),
-    ('STD00049', 'student49@example.com', 'FirstName49', 'LastName49', 'image_path_49', 'PRO-002'),
-    ('STD00050', 'student50@example.com', 'FirstName50', 'LastName50', 'image_path_50', 'PRO-003');
+    ('STD00020', 'student20@example.com', 'FirstName20', 'LastName20', 'image_path_20', 'PRO-003');
 
 -- student_branches
 INSERT INTO student_branches (student_code, program_code, branch_code) VALUES
-    ('STD00001', 'PRO-001', 'BR-001'), ('STD00002', 'PRO-002', 'BR-002'), ('STD00003', 'PRO-003', 'BR-003'), ('STD00004', 'PRO-001', 'BR-001'), ('STD00005', 'PRO-002', 'BR-002'), ('STD00006', 'PRO-003', 'BR-003'), ('STD00007', 'PRO-001', 'BR-001'), ('STD00008', 'PRO-002', 'BR-002'), ('STD00009', 'PRO-003', 'BR-003'), ('STD00010', 'PRO-001', 'BR-001'), ('STD00011', 'PRO-002', 'BR-002'), ('STD00012', 'PRO-003', 'BR-003'), ('STD00013', 'PRO-001', 'BR-001'), ('STD00014', 'PRO-002', 'BR-002'), ('STD00015', 'PRO-003', 'BR-003'), ('STD00016', 'PRO-001', 'BR-001'), ('STD00017', 'PRO-002', 'BR-002'), ('STD00018', 'PRO-003', 'BR-003'), ('STD00019', 'PRO-001', 'BR-001'), ('STD00020', 'PRO-002', 'BR-002'), ('STD00021', 'PRO-003', 'BR-003'), ('STD00022', 'PRO-001', 'BR-001'), ('STD00023', 'PRO-002', 'BR-002'), ('STD00024', 'PRO-003', 'BR-003'), ('STD00025', 'PRO-001', 'BR-001'), ('STD00026', 'PRO-002', 'BR-002'), ('STD00027', 'PRO-003', 'BR-003'), ('STD00028', 'PRO-001', 'BR-001'), ('STD00029', 'PRO-002', 'BR-002'), ('STD00030', 'PRO-003', 'BR-003');
-INSERT INTO student_branches (student_code, program_code, branch_code) VALUES
-    ('STD00031', 'PRO-001', 'BR-001'), ('STD00032', 'PRO-002', 'BR-002'), ('STD00033', 'PRO-003', 'BR-003'), ('STD00034', 'PRO-001', 'BR-004'), ('STD00035', 'PRO-002', 'BR-005'), ('STD00036', 'PRO-003', 'BR-001'), ('STD00037', 'PRO-001', 'BR-002'), ('STD00038', 'PRO-002', 'BR-003'), ('STD00039', 'PRO-003', 'BR-004'), ('STD00040', 'PRO-001', 'BR-005'), ('STD00041', 'PRO-002', 'BR-001'), ('STD00042', 'PRO-003', 'BR-002'), ('STD00043', 'PRO-001', 'BR-003'), ('STD00044', 'PRO-002', 'BR-004'), ('STD00045', 'PRO-003', 'BR-005'), ('STD00046', 'PRO-001', 'BR-001'), ('STD00047', 'PRO-002', 'BR-002'), ('STD00048', 'PRO-003', 'BR-003'), ('STD00049', 'PRO-001', 'BR-004'), ('STD00050', 'PRO-002', 'BR-005');
-
+    ('STD00001', 'PRO-001', 'BR-001'), ('STD00002', 'PRO-002', 'BR-002'),
+    ('STD00003', 'PRO-003', 'BR-003'), ('STD00004', 'PRO-001', 'BR-001'), 
+    ('STD00005', 'PRO-002', 'BR-002'), ('STD00006', 'PRO-003', 'BR-003'), 
+    ('STD00007', 'PRO-001', 'BR-001'), ('STD00008', 'PRO-002', 'BR-002'), 
+    ('STD00009', 'PRO-003', 'BR-003'), ('STD00010', 'PRO-001', 'BR-001'), 
+    ('STD00011', 'PRO-002', 'BR-002'), ('STD00012', 'PRO-003', 'BR-003'), 
+    ('STD00013', 'PRO-001', 'BR-001'), ('STD00014', 'PRO-002', 'BR-002'), 
+    ('STD00015', 'PRO-003', 'BR-003'), ('STD00016', 'PRO-001', 'BR-001'), 
+    ('STD00017', 'PRO-002', 'BR-002'), ('STD00018', 'PRO-003', 'BR-003'), 
+    ('STD00019', 'PRO-001', 'BR-001'), ('STD00020', 'PRO-002', 'BR-002');
 
 -- 1. ## TEST  if student not pass all prerequisites course before register the next course
 -- not added into registered
@@ -162,18 +138,25 @@ GROUP BY s.student_code;
 -- - A student who has not chosen any branch.
 -- add new students
 INSERT INTO students (student_code, email, first_name, last_name, image, program_code) VALUES
-    ('STD00051', 'student51@example.com', 'FirstName51', 'LastName51', 'image_path_51', 'PRO-001'),
-    ('STD00052', 'student52@example.com', 'FirstName52', 'LastName52', 'image_path_52', 'PRO-002'),
-    ('STD00053', 'student53@example.com', 'FirstName53', 'LastName53', 'image_path_53', 'PRO-003'),
-    ('STD00054', 'student54@example.com', 'FirstName54', 'LastName54', 'image_path_54', 'PRO-001'),
-    ('STD00055', 'student55@example.com', 'FirstName55', 'LastName55', 'image_path_55', 'PRO-002')
+    ('STD00021', 'student21@example.com', 'FirstName21', 'LastName21', 'image_path_21', 'PRO-001'),
+    ('STD00022', 'student22@example.com', 'FirstName22', 'LastName22', 'image_path_22', 'PRO-002'),
+    ('STD00023', 'student23@example.com', 'FirstName23', 'LastName23', 'image_path_23', 'PRO-003'),
+    ('STD00024', 'student24@example.com', 'FirstName24', 'LastName24', 'image_path_24', 'PRO-001'),
+    ('STD00025', 'student25@example.com', 'FirstName25', 'LastName25', 'image_path_25', 'PRO-002');
+
 
 SELECT * FROM students s
 WHERE (SELECT count(*) FROM student_branches sb
         WHERE s.student_code = sb.student_code) = 0
 
 -- ############################################
--- prerequisites course and opening
+-- prerequisite course opening
+-- course prerequisites
+INSERT INTO course_prerequisites (course_code, prerequisites_course) VALUES
+    ('C-003', 'C-001'),
+    ('C-003', 'C-002');
+
+
 SELECT c.course_code as course, cp.prerequisites_course as requied_course,
 c.is_opening, is_ended
 FROM
@@ -194,6 +177,9 @@ SELECT * FROM limited_courses wl;
  
 -- register student to course C-004
 -- check fn_insert_register_or_wait in trigger.sql
+  -- check if is_opening = FALSE
+  -- check if not prerequisites course
+  -- check if limit student 
 INSERT INTO registered (course_code, student_code)
 VALUES
   ('C-004', 'STD00001'), 
@@ -208,24 +194,7 @@ VALUES
   ('C-004', 'STD00010'), 
   ('C-004', 'STD00011'), 
   ('C-004', 'STD00012'), 
-  ('C-004', 'STD00013'), 
-  ('C-004', 'STD00014'), 
-  ('C-004', 'STD00015'), 
-  ('C-004', 'STD00016'), 
-  ('C-004', 'STD00017'), 
-  ('C-004', 'STD00018'), 
-  ('C-004', 'STD00019'), 
-  ('C-004', 'STD00020'), 
-  ('C-004', 'STD00021'), 
-  ('C-004', 'STD00022'), 
-  ('C-004', 'STD00023'), 
-  ('C-004', 'STD00024'), 
-  ('C-004', 'STD00025'), 
-  ('C-004', 'STD00026'), 
-  ('C-004', 'STD00027'), 
-  ('C-004', 'STD00028'), 
-  ('C-004', 'STD00029'), 
-  ('C-004', 'STD00030');
+  ('C-004', 'STD00013');
 
 -- CHECK for register student
 SELECT count(*) as registered FROM registered WHERE course_code = 'C-004';
@@ -281,7 +250,7 @@ ORDER BY created_date;
 -- the stuedent not allow registering the course. 
 -- set is_opening = FALSE
 UPDATE courses SET is_opening = FALSE
-WHERE course_code = 'C-004'
+WHERE course_code = 'C-004';
 -- check opening status
 SELECT * FROM courses WHERE course_code = 'C-004';
 -- check students have taken C-004
@@ -291,13 +260,11 @@ SELECT * FROM taken WHERE course_code = 'C-004';
 -- insert credit points of students who registered C-004 
 INSERT INTO student_credit_point (taken_id, point)
 VALUES
+  (6, 22),(6, 25),(6, 19),(6, 23),
+  (7, 25),(7, 24),(7, 18),(7, 15),
   (8, 10),(8, 19),(8, 23),(8, 17),
   (9, 25),(9, 24),(9, 25),(9, 25),
-  (10, 22),(10, 25),(10, 19),(10, 23),
-  (11, 25),(11, 24),(11, 18),(11, 15),
-  (12, 25),(12, 25),(12, 25),(12, 25),
-  (13, 24),(13, 21),(13, 25),(13, 25),
-  (14, 25),(14, 25),(14, 13),(14, 25);
+  (10, 25),(10, 25),(10, 25),(10, 25);
   
 SELECT * FROM student_credit_point WHERE taken_id = 8
 
@@ -314,7 +281,7 @@ INNER JOIN courses c ON c.course_code = t.course_code
 INNER JOIN students s ON s.student_code = t.student_code
 WHERE t.course_code = 'C-004';
 
--- set is_ended = TRUE
+-- set is_ended = TRUE  and grading student with trigger
 -- check fn_grade_students_when_course_update_to_ended in trigger.sql
 UPDATE courses SET is_ended = TRUE
 WHERE course_code = 'C-004'
@@ -333,7 +300,17 @@ INNER JOIN students s ON s.student_code = t.student_code
 WHERE t.course_code = 'C-004';
 
 -- Now run app.py to se the list of student grade who registered in course C-004
-
+-- sql for the app 
+SELECT s.student_code,
+    CONCAT(s.first_name ,' ', s.last_name) AS student_name,
+    CONCAT(co.name,' (', r.course_code, ')') AS course,
+    fn_taken_course_status(r.course_code,r.student_code) as register_status
+    FROM registered r
+    LEFT JOIN courses co ON co.course_code = r.course_code
+    LEFT JOIN students s ON s.student_code = r.student_code
+    LEFT JOIN taken t ON t.student_code = r.student_code
+    LEFT JOIN waiting_list wl ON wl.student_code = r.student_code
+    WHERE r.course_code = 'C-004';
 
 -- ------------------------------SECTION 6--------------------------------------------
 -- ############################################
@@ -352,7 +329,7 @@ SELECT c.course_code,sb.student_code FROM courses c
   INNER JOIN mandatory_branch mb ON c.course_code = mb.course_code
   INNER JOIN student_branches sb ON mb.branch_code = sb.branch_code
 
--- auto registering students who are belong to the mandatory branch 
+-- auto registering students using function fn_auto_registering_for_mandatory_branch
 -- check fn_auto_registering_for_mandatory_branch in query
 SELECT * 
 FROM mandatory_branch, 
@@ -368,9 +345,9 @@ ORDER BY t.student_code
 -- get recommended branch
 -- insert sample date 
 INSERT INTO recommended_branch (course_code, program_code, branch_code) VALUES
-    ('C-007', 'PRO-001', 'BR-001'), 
-    ('C-008', 'PRO-002', 'BR-002'), 
-    ('C-009', 'PRO-003', 'BR-003');
+    ('C-001', 'PRO-001', 'BR-001'), 
+    ('C-002', 'PRO-002', 'BR-002'), 
+    ('C-003', 'PRO-003', 'BR-003');
 
 -- get curses which 
 SELECT c.* FROM courses c 
