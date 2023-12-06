@@ -122,7 +122,8 @@ CREATE TABLE IF NOT EXISTS taken (
 
 CREATE TABLE IF NOT EXISTS student_credit_point (
   taken_id SERIAL NOT NULL,
-  point INT
+  point INT,
+  FOREIGN KEY (taken_id)  REFERENCES taken(taken_id)
 );
 
 CREATE TABLE IF NOT EXISTS course_prerequisites (

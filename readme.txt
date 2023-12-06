@@ -17,3 +17,6 @@ query.sql
 view.sql 
     - following project requriment
 
+
+- ERD https://dbdiagram.io/d/University-program-v3-5e8e21593d30f00839b3b682 and also in github 
+
