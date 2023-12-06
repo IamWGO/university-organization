@@ -14,42 +14,15 @@ DELETE FROM recommended_branch;
 -- ------------------------------SECTION 2--------------------------------------------
 -- register students to the course
 
--- sample 50 rows students and student_branches 
--- Students
-INSERT INTO students (student_code, email, first_name, last_name, image, program_code) VALUES
-    ('STD00001', 'student01@example.com', 'FirstName01', 'LastName01', 'image_path_01', 'PRO-001'),
-    ('STD00002', 'student02@example.com', 'FirstName02', 'LastName02', 'image_path_02', 'PRO-002'),
-    ('STD00003', 'student03@example.com', 'FirstName03', 'LastName03', 'image_path_03', 'PRO-003'),
-    ('STD00004', 'student04@example.com', 'FirstName04', 'LastName04', 'image_path_04', 'PRO-001'),
-    ('STD00005', 'student05@example.com', 'FirstName05', 'LastName05', 'image_path_05', 'PRO-002'),
-    ('STD00006', 'student06@example.com', 'FirstName06', 'LastName06', 'image_path_06', 'PRO-003'),
-    ('STD00007', 'student07@example.com', 'FirstName07', 'LastName07', 'image_path_07', 'PRO-001'),
-    ('STD00008', 'student08@example.com', 'FirstName08', 'LastName08', 'image_path_08', 'PRO-002'),
-    ('STD00009', 'student09@example.com', 'FirstName09', 'LastName09', 'image_path_09', 'PRO-003'),
-    ('STD00010', 'student10@example.com', 'FirstName10', 'LastName10', 'image_path_10', 'PRO-001'),
-    ('STD00011', 'student11@example.com', 'FirstName11', 'LastName11', 'image_path_11', 'PRO-003'),
-    ('STD00012', 'student12@example.com', 'FirstName12', 'LastName12', 'image_path_12', 'PRO-001'),
-    ('STD00013', 'student13@example.com', 'FirstName13', 'LastName13', 'image_path_13', 'PRO-002'),
-    ('STD00014', 'student14@example.com', 'FirstName14', 'LastName14', 'image_path_14', 'PRO-003'),
-    ('STD00015', 'student15@example.com', 'FirstName15', 'LastName15', 'image_path_15', 'PRO-001'),
-    ('STD00016', 'student16@example.com', 'FirstName16', 'LastName16', 'image_path_16', 'PRO-002'),
-    ('STD00017', 'student17@example.com', 'FirstName17', 'LastName17', 'image_path_17', 'PRO-003'),
-    ('STD00018', 'student18@example.com', 'FirstName18', 'LastName18', 'image_path_18', 'PRO-001'),
-    ('STD00019', 'student19@example.com', 'FirstName19', 'LastName19', 'image_path_19', 'PRO-002'),
-    ('STD00020', 'student20@example.com', 'FirstName20', 'LastName20', 'image_path_20', 'PRO-003');
+SELECT c.course_code as course, cp.prerequisites_course as requied_course,
+c.is_opening, is_ended
+FROM
+  courses c
+INNER JOIN
+  course_prerequisites cp ON c.course_code = cp.course_code
+WHERE
+  c.is_opening = TRUE AND c.course_code = 'C-003';
 
--- student_branches
-INSERT INTO student_branches (student_code, program_code, branch_code) VALUES
-    ('STD00001', 'PRO-001', 'BR-001'), ('STD00002', 'PRO-002', 'BR-002'),
-    ('STD00003', 'PRO-003', 'BR-003'), ('STD00004', 'PRO-001', 'BR-001'), 
-    ('STD00005', 'PRO-002', 'BR-002'), ('STD00006', 'PRO-003', 'BR-003'), 
-    ('STD00007', 'PRO-001', 'BR-001'), ('STD00008', 'PRO-002', 'BR-002'), 
-    ('STD00009', 'PRO-003', 'BR-003'), ('STD00010', 'PRO-001', 'BR-001'), 
-    ('STD00011', 'PRO-002', 'BR-002'), ('STD00012', 'PRO-003', 'BR-003'), 
-    ('STD00013', 'PRO-001', 'BR-001'), ('STD00014', 'PRO-002', 'BR-002'), 
-    ('STD00015', 'PRO-003', 'BR-003'), ('STD00016', 'PRO-001', 'BR-001'), 
-    ('STD00017', 'PRO-002', 'BR-002'), ('STD00018', 'PRO-003', 'BR-003'), 
-    ('STD00019', 'PRO-001', 'BR-001'), ('STD00020', 'PRO-002', 'BR-002');
 
 -- 1. ## TEST  if student not pass all prerequisites course before register the next course
 -- not added into registered
@@ -150,21 +123,6 @@ WHERE (SELECT count(*) FROM student_branches sb
         WHERE s.student_code = sb.student_code) = 0
 
 -- ############################################
--- prerequisite course opening
--- course prerequisites
-INSERT INTO course_prerequisites (course_code, prerequisites_course) VALUES
-    ('C-003', 'C-001'),
-    ('C-003', 'C-002');
-
-
-SELECT c.course_code as course, cp.prerequisites_course as requied_course,
-c.is_opening, is_ended
-FROM
-  courses c
-INNER JOIN
-  course_prerequisites cp ON c.course_code = cp.course_code
-WHERE
-  c.is_opening = TRUE AND c.course_code = 'C-003';
 
 
 -- ------------------------------SECTION 4--------------------------------------------
